@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZC 總部每日回報系統</title>
+    <title>ZC 總部每日回報系統 v2</title>
     <style>
         :root {
             --primary-color: #2b5c43;
@@ -82,14 +82,7 @@
             margin-bottom: 4px;
         }
 
-        .danger-hint {
-            color: var(--danger-color);
-            font-weight: bold;
-            font-size: 13px;
-            margin-top: 4px;
-        }
-
-        input[type="text"], textarea, select {
+        input[type="text"], textarea {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid var(--border-color);
@@ -99,7 +92,7 @@
             transition: border-color 0.2s;
         }
 
-        input[type="text"]:focus, textarea:focus, select:focus {
+        input[type="text"]:focus, textarea:focus {
             outline: none;
             border-color: var(--primary-color);
         }
@@ -127,21 +120,6 @@
             font-size: 16px;
         }
 
-        .day-hours-badge {
-            font-size: 13px;
-            padding: 2px 8px;
-            border-radius: 20px;
-            background: #e2e8f0;
-            color: #4a5568;
-            margin-left: 10px;
-        }
-
-        .day-hours-badge.overtime {
-            background: var(--warning-bg);
-            color: var(--danger-color);
-            border: 1px solid var(--danger-color);
-        }
-
         .btn-plus {
             background: var(--primary-color);
             color: white;
@@ -160,7 +138,7 @@
 
         .inline-task-row {
             display: grid;
-            grid-template-columns: 2.5fr 2fr 1.5fr auto;
+            grid-template-columns: 3fr 2.5fr auto;
             gap: 10px;
             background: white;
             padding: 12px;
@@ -251,26 +229,33 @@
     </div>
 
     <div class="card">
-        <div class="section-title">📅 今日主要執行項目與工時分析</div>
-        <div class="label-desc" style="margin-bottom: 15px; color: var(--primary-color); font-weight: bold;">💡 備註：請依據「重要程度最高（Top 3 核心工作）」由上往下排列填寫。</div>
-        
-        <div class="day-bucket">
-            <div class="day-title">
-                <div>
-                    <span>本日執行排程</span>
-                    <span id="dayHoursBadge" class="day-hours-badge">今日總計: 0 小時</span>
-                </div>
-                <button class="btn-plus" onclick="addInlineRow()">＋</button>
-            </div>
-            <div id="rowsContainer"></div>
-            <div id="overtimeAlert" class="danger-hint" style="display:none; background:#fff5f5; padding:8px; border-radius:4px; border:1px dashed var(--danger-color);">
-                ⚠️ 提示：當日總工時已超過 8 小時，需與主管確認加班或是人力支援。
-            </div>
+        <div class="section-title">📈 各部門人員關鍵數據每日回報</div>
+        <div class="label-desc">請複製貼上您負責的每日關鍵數據、廣告業績、到貨進度、或 KPI 指標。</div>
+        <div class="form-group">
+            <textarea id="dailyMetrics" placeholder="例如：今日廣告 ROAS: 4.2 / 官網業績: $55,000 / 新到貨商品盤點完成 30 箱..."></textarea>
         </div>
     </div>
 
     <div class="card">
-        <div class="section-title">🔍 今日未完成/延宕事項與明日交接</div>
+        <div class="section-title">📅 今日主要執行項目</div>
+        <div class="label-desc" style="margin-bottom: 15px; color: var(--primary-color); font-weight: bold;">💡 備註：請依據「重要程度最高（Top 3 核心工作）」由上往下排列填寫。</div>
+        
+        <div class="day-bucket">
+            <div class="day-title">
+                <div>本日執行項目</div>
+                <button class="btn-plus" onclick="addInlineRow()">＋</button>
+            </div>
+            <div id="rowsContainer"></div>
+        </div>
+
+        <div class="form-group" style="margin-top: 15px;">
+            <label style="color: #cbd5e10; font-size: 14px;">⚠️ 若今日實際執行時間/進度，超過原本每週排程之預估，請在下方特別註明原因與落差時間：</label>
+            <textarea id="overtimeReason" placeholder="例如：項目 2 因廠商臨時調整規格，實際多花了 1.5 小時溝通處理。若無進度延宕或超時，請填「無」。"></textarea>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">🔍 今日未完成/延宕事項與明日預告</div>
         <div class="form-group">
             <label>一、今日未完成事項與卡關原因：</label>
             <textarea id="unfinishedText" placeholder="若皆已按時完成，請填「無」。若有延宕項目，請註明原因與預計完成時間..."></textarea>
@@ -282,10 +267,10 @@
     </div>
 
     <div class="card">
-        <div class="section-title">🤝 三、跨部門協調 / 主管協作反饋</div>
+        <div class="section-title">🚨 今天申請加班 或是人員協助的原因與事項</div>
         <div class="label-desc" style="margin-bottom: 10px; color: #2b5c43; font-weight: bold;">💡 備註：若主管職，請填寫本日 PT 或是部屬需協作與交接項目。</div>
         <div class="form-group">
-            <textarea id="assistText" placeholder="填寫需要跨部門協助或需要調整的工作事項..."></textarea>
+            <textarea id="assistText" placeholder="若有申請加班，請務必填寫「加班原因」與「預估時數」；需要人手支援也請寫明事項。若無則填「無」。"></textarea>
         </div>
     </div>
 
@@ -297,21 +282,15 @@
 
 <script>
     const taskData = [];
-    const timeValueMap = {
-        '15 分鐘': 15, '30 分鐘': 30, '45 分鐘': 45,
-        '1 小時': 60, '1.5 小時': 90, '2 小時': 120,
-        '3 小時': 180, '4 小時': 240
-    };
 
     window.onload = function() {
-        // 初始化今天日期與星期
         const today = new Date();
         const month = today.getMonth() + 1;
         const date = today.getDate();
         const days = ['日', '一', '二', '三', '四', '五', '六'];
         document.getElementById('reportDate').value = `${month}/${date} (${days[today.getDay()]})`;
 
-        // 預設帶入 3 個空白格子（方便直接填寫 Top 3 核心工作）
+        // 預設帶入 3 個空白格子
         for(let i=0; i<3; i++) { addInlineRow(); }
     }
 
@@ -319,7 +298,7 @@
         const rowsContainer = document.getElementById('rowsContainer');
         const rowIndex = taskData.length;
 
-        const taskObj = { content: '', memo: '', time: '15 分鐘' };
+        const taskObj = { content: '', memo: '' };
         taskData.push(taskObj);
 
         const rowDiv = document.createElement('div');
@@ -337,25 +316,13 @@
                 <input type="text" placeholder="工作內容" oninput="updateTaskData(${rowIndex}, 'content', this.value)">
             </div>
             <input type="text" placeholder="備註 (選填)" oninput="updateTaskData(${rowIndex}, 'memo', this.value)">
-            <select onchange="updateTaskData(${rowIndex}, 'time', this.value)">
-                <option value="15 分鐘">15 分鐘</option>
-                <option value="30 分鐘">30 分鐘</option>
-                <option value="45 分鐘">45 分鐘</option>
-                <option value="1 小時">1 小時</option>
-                <option value="1.5 小時">1.5 小時</option>
-                <option value="2 小時">2 小時</option>
-                <option value="3 小時">3 小時</option>
-                <option value="4 小時">4 小時</option>
-            </select>
             <button class="btn-delete" onclick="deleteInlineRow(${rowIndex})">❌</button>
         `;
         rowsContainer.appendChild(rowDiv);
-        calculateHours();
     }
 
     function updateTaskData(index, field, value) {
         if(taskData[index]) { taskData[index][field] = value; }
-        if(field === 'time') { calculateHours(); }
     }
 
     function deleteInlineRow(index) {
@@ -383,34 +350,10 @@
                     <input type="text" value="${task.content}" placeholder="工作內容" oninput="updateTaskData(${i}, 'content', this.value)">
                 </div>
                 <input type="text" value="${task.memo}" placeholder="備註 (選填)" oninput="updateTaskData(${i}, 'memo', this.value)">
-                <select onchange="updateTaskData(${i}, 'time', this.value)">
-                    ${['15 分鐘','30 分鐘','45 分鐘','1 小時','1.5 小時','2 小時','3 小時','4 小時'].map(t => `<option value="${t}" ${task.time === t ? 'selected' : ''}>${t}</option>`).join('')}
-                </select>
                 <button class="btn-delete" onclick="deleteInlineRow(${i})">❌</button>
             `;
             rowsContainer.appendChild(rowDiv);
         });
-
-        calculateHours();
-    }
-
-    function calculateHours() {
-        let totalMinutes = 0;
-        taskData.forEach(t => totalMinutes += (timeValueMap[t.time] || 0));
-
-        const hours = (totalMinutes / 60).toFixed(1);
-        const badge = document.getElementById('dayHoursBadge');
-        const alertBox = document.getElementById('overtimeAlert');
-
-        badge.textContent = `今日總計: ${hours} 小時`;
-
-        if (totalMinutes > 480) {
-            badge.className = 'day-hours-badge overtime';
-            alertBox.style.display = 'block';
-        } else {
-            badge.className = 'day-hours-badge';
-            alertBox.style.display = 'none';
-        }
     }
 
     function generateAndCopy() {
@@ -418,13 +361,11 @@
         const reporter = document.getElementById('reporter').value || '[姓名] / [部門職稱]';
         const reportTo = document.getElementById('reportTo').value || '[填寫您的對應主管]';
         
+        const dailyMetrics = document.getElementById('dailyMetrics').value || '無';
+        const overtimeReason = document.getElementById('overtimeReason').value || '無';
         const unfinishedText = document.getElementById('unfinishedText').value || '無';
         const tomorrowPlan = document.getElementById('tomorrowPlan').value || '[未填寫]';
         const assistText = document.getElementById('assistText').value || '無';
-
-        let totalMinutes = 0;
-        taskData.forEach(t => totalMinutes += (timeValueMap[t.time] || 0));
-        let overtimeWarning = totalMinutes > 480 ? ' ⚠️ (當日工作排程超過8小時，需與主管確認加班或是人力支援)' : '';
 
         // 串接工作項目
         let taskOutput = '';
@@ -439,7 +380,7 @@
                 else if (index === 2) emoji = '🥉 ';
                 
                 const memoStr = task.memo ? ` (備註: ${task.memo})` : ' (備註: 無)';
-                taskOutput += `  ${emoji}項目 ${index + 1}: ${task.content}${memoStr} [⏱️ ${task.time}]\n`;
+                taskOutput += `  ${emoji}項目 ${index + 1}: ${task.content}${memoStr}\n`;
             });
         }
 
@@ -449,13 +390,18 @@
 回報人：${reporter}
 匯報對象：${reportTo}
 
-一、本日主要執行項目與工時分析（已依重要度由上往下排序）：${overtimeWarning}
+一、各部門人員關鍵數據每日回報：
+${dailyMetrics}
+
+二、今日主要執行項目（已依重要度由上往下排序）：
 ${taskOutput}
-二、今日未完成/延宕事項與明日預告：
+- 進度/時間超時說明（相較週排程）：${overtimeReason}
+
+三、今日未完成/延宕事項與明日預告：
 - 本日未完成事項原因：${unfinishedText}
 - 明日核心工作預告 (Top 1~2)：${tomorrowPlan}
 
-三、跨部門協調 / 主管協作反饋：
+四、今天申請加班 或是人員協助的原因與事項：
 - ${assistText}`;
 
         const previewDiv = document.getElementById('preview');
