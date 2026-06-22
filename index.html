@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZC 總部每日回報系統</title>
+    <style>
+        :root {
+            --primary-color: #2b5c43;
+            --primary-hover: #1e422f;
+            --bg-color: #f4f6f8;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #e2e8f0;
+            --danger-color: #e53e3e;
+            --warning-bg: #fff5f5;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-top: 0;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            padding: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .section-title {
+            font-size: 18px;
+            color: var(--primary-color);
+            border-left: 4px solid var(--primary-color);
+            padding-left: 10px;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .label-desc {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+
+        .danger-hint {
+            color: var(--danger-color);
+            font-weight: bold;
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+
+        .day-bucket {
+            background: #f8fafc;
+            border: 1px solid #edf2f7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .day-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .day-hours-badge {
+            font-size: 13px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: #e2e8f0;
+            color: #4a5568;
+            margin-left: 10px;
+        }
+
+        .day-hours-badge.overtime {
+            background: var(--warning-bg);
+            color: var(--danger-color);
+            border: 1px solid var(--danger-color);
+        }
+
+        .btn-plus {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .btn-plus:hover { background: var(--primary-hover); }
+
+        .inline-task-row {
+            display: grid;
+            grid-template-columns: 2.5fr 2fr 1.5fr auto;
+            gap: 10px;
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 10px;
+            align-items: center;
+        }
+
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 5px;
+        }
+        .btn-delete:hover { color: var(--danger-color); }
+
+        .btn {
+            display: block;
+            width: 100%;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn:hover { background-color: var(--primary-hover); }
+
+        .preview-area {
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 8px;
+            padding: 15px;
+            white-space: pre-wrap;
+            font-size: 14px;
+            color: #334155;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            display: none;
+            z-index: 3000;
+        }
+
+        @media (max-width: 600px) {
+            .inline-task-row { grid-template-columns: 1fr; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📊 ZC 總部每日工作回報系統</h1>
+        <p class="subtitle">追蹤專案進度，落實當日核心產出</p>
+    </header>
+
+    <div class="card">
+        <div class="section-title">📍 基本資訊</div>
+        <div class="form-group">
+            <label for="reportDate">回報日期</label>
+            <input type="text" id="reportDate">
+        </div>
+        <div class="form-group">
+            <label for="reporter">回報人</label>
+            <input type="text" id="reporter" placeholder="請輸入姓名 / 部門職稱">
+        </div>
+        <div class="form-group">
+            <label for="reportTo">匯報對象</label>
+            <input type="text" id="reportTo" placeholder="例如：採購主管 / 行銷主管 / 老闆 / ALY">
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">📅 今日主要執行項目與工時分析</div>
+        <div class="label-desc" style="margin-bottom: 15px; color: var(--primary-color); font-weight: bold;">💡 備註：請依據「重要程度最高（Top 3 核心工作）」由上往下排列填寫。</div>
+        
+        <div class="day-bucket">
+            <div class="day-title">
+                <div>
+                    <span>本日執行排程</span>
+                    <span id="dayHoursBadge" class="day-hours-badge">今日總計: 0 小時</span>
+                </div>
+                <button class="btn-plus" onclick="addInlineRow()">＋</button>
+            </div>
+            <div id="rowsContainer"></div>
+            <div id="overtimeAlert" class="danger-hint" style="display:none; background:#fff5f5; padding:8px; border-radius:4px; border:1px dashed var(--danger-color);">
+                ⚠️ 提示：當日總工時已超過 8 小時，需與主管確認加班或是人力支援。
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">🔍 今日未完成/延宕事項與明日交接</div>
+        <div class="form-group">
+            <label>一、今日未完成事項與卡關原因：</label>
+            <textarea id="unfinishedText" placeholder="若皆已按時完成，請填「無」。若有延宕項目，請註明原因與預計完成時間..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>二、明日核心工作預告 (Top 1~2)：</label>
+            <textarea id="tomorrowPlan" placeholder="明天的核心重點是..."></textarea>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="section-title">🤝 三、跨部門協調 / 主管協作反饋</div>
+        <div class="label-desc" style="margin-bottom: 10px; color: #2b5c43; font-weight: bold;">💡 備註：若主管職，請填寫本日 PT 或是部屬需協作與交接項目。</div>
+        <div class="form-group">
+            <textarea id="assistText" placeholder="填寫需要跨部門協助或需要調整的工作事項..."></textarea>
+        </div>
+    </div>
+
+    <button class="btn" onclick="generateAndCopy()">產生並複製每日回報 🚀</button>
+    <div id="preview" class="preview-area"></div>
+</div>
+
+<div id="toast" class="toast">📋 已複製每日回報至剪貼簿！</div>
+
+<script>
+    const taskData = [];
+    const timeValueMap = {
+        '15 分鐘': 15, '30 分鐘': 30, '45 分鐘': 45,
+        '1 小時': 60, '1.5 小時': 90, '2 小時': 120,
+        '3 小時': 180, '4 小時': 240
+    };
+
+    window.onload = function() {
+        // 初始化今天日期與星期
+        const today = new Date();
+        const month = today.getMonth() + 1;
+        const date = today.getDate();
+        const days = ['日', '一', '二', '三', '四', '五', '六'];
+        document.getElementById('reportDate').value = `${month}/${date} (${days[today.getDay()]})`;
+
+        // 預設帶入 3 個空白格子（方便直接填寫 Top 3 核心工作）
+        for(let i=0; i<3; i++) { addInlineRow(); }
+    }
+
+    function addInlineRow() {
+        const rowsContainer = document.getElementById('rowsContainer');
+        const rowIndex = taskData.length;
+
+        const taskObj = { content: '', memo: '', time: '15 分鐘' };
+        taskData.push(taskObj);
+
+        const rowDiv = document.createElement('div');
+        rowDiv.className = 'inline-task-row';
+        rowDiv.id = `row-${rowIndex}`;
+
+        let rankLabel = `項目 ${rowIndex + 1}`;
+        if (rowIndex === 0) rankLabel = '🥇 項目 1';
+        else if (rowIndex === 1) rankLabel = '🥈 項目 2';
+        else if (rowIndex === 2) rankLabel = '🥉 項目 3';
+
+        rowDiv.innerHTML = `
+            <div style="display:flex; align-items:center; gap:8px;">
+                <span style="font-weight:bold; font-size:14px; color:#4a5568; white-space:nowrap;">${rankLabel}:</span>
+                <input type="text" placeholder="工作內容" oninput="updateTaskData(${rowIndex}, 'content', this.value)">
+            </div>
+            <input type="text" placeholder="備註 (選填)" oninput="updateTaskData(${rowIndex}, 'memo', this.value)">
+            <select onchange="updateTaskData(${rowIndex}, 'time', this.value)">
+                <option value="15 分鐘">15 分鐘</option>
+                <option value="30 分鐘">30 分鐘</option>
+                <option value="45 分鐘">45 分鐘</option>
+                <option value="1 小時">1 小時</option>
+                <option value="1.5 小時">1.5 小時</option>
+                <option value="2 小時">2 小時</option>
+                <option value="3 小時">3 小時</option>
+                <option value="4 小時">4 小時</option>
+            </select>
+            <button class="btn-delete" onclick="deleteInlineRow(${rowIndex})">❌</button>
+        `;
+        rowsContainer.appendChild(rowDiv);
+        calculateHours();
+    }
+
+    function updateTaskData(index, field, value) {
+        if(taskData[index]) { taskData[index][field] = value; }
+        if(field === 'time') { calculateHours(); }
+    }
+
+    function deleteInlineRow(index) {
+        taskData.splice(index, 1);
+        const rowsContainer = document.getElementById('rowsContainer');
+        rowsContainer.innerHTML = '';
+        
+        const tempArr = [...taskData];
+        taskData.length = 0;
+
+        tempArr.forEach((task, i) => {
+            taskData.push(task);
+            const rowDiv = document.createElement('div');
+            rowDiv.className = 'inline-task-row';
+            rowDiv.id = `row-${i}`;
+
+            let rankLabel = `項目 ${i + 1}`;
+            if (i === 0) rankLabel = '🥇 項目 1';
+            else if (i === 1) rankLabel = '🥈 項目 2';
+            else if (i === 2) rankLabel = '🥉 項目 3';
+
+            rowDiv.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-weight:bold; font-size:14px; color:#4a5568; white-space:nowrap;">${rankLabel}:</span>
+                    <input type="text" value="${task.content}" placeholder="工作內容" oninput="updateTaskData(${i}, 'content', this.value)">
+                </div>
+                <input type="text" value="${task.memo}" placeholder="備註 (選填)" oninput="updateTaskData(${i}, 'memo', this.value)">
+                <select onchange="updateTaskData(${i}, 'time', this.value)">
+                    ${['15 分鐘','30 分鐘','45 分鐘','1 小時','1.5 小時','2 小時','3 小時','4 小時'].map(t => `<option value="${t}" ${task.time === t ? 'selected' : ''}>${t}</option>`).join('')}
+                </select>
+                <button class="btn-delete" onclick="deleteInlineRow(${i})">❌</button>
+            `;
+            rowsContainer.appendChild(rowDiv);
+        });
+
+        calculateHours();
+    }
+
+    function calculateHours() {
+        let totalMinutes = 0;
+        taskData.forEach(t => totalMinutes += (timeValueMap[t.time] || 0));
+
+        const hours = (totalMinutes / 60).toFixed(1);
+        const badge = document.getElementById('dayHoursBadge');
+        const alertBox = document.getElementById('overtimeAlert');
+
+        badge.textContent = `今日總計: ${hours} 小時`;
+
+        if (totalMinutes > 480) {
+            badge.className = 'day-hours-badge overtime';
+            alertBox.style.display = 'block';
+        } else {
+            badge.className = 'day-hours-badge';
+            alertBox.style.display = 'none';
+        }
+    }
+
+    function generateAndCopy() {
+        const reportDate = document.getElementById('reportDate').value || '[未填寫]';
+        const reporter = document.getElementById('reporter').value || '[姓名] / [部門職稱]';
+        const reportTo = document.getElementById('reportTo').value || '[填寫您的對應主管]';
+        
+        const unfinishedText = document.getElementById('unfinishedText').value || '無';
+        const tomorrowPlan = document.getElementById('tomorrowPlan').value || '[未填寫]';
+        const assistText = document.getElementById('assistText').value || '無';
+
+        let totalMinutes = 0;
+        taskData.forEach(t => totalMinutes += (timeValueMap[t.time] || 0));
+        let overtimeWarning = totalMinutes > 480 ? ' ⚠️ (當日工作排程超過8小時，需與主管確認加班或是人力支援)' : '';
+
+        // 串接工作項目
+        let taskOutput = '';
+        const validTasks = taskData.filter(t => t.content.trim() !== '');
+        if (validTasks.length === 0) {
+            taskOutput = '  [本日無填寫具體工作內容]\n';
+        } else {
+            validTasks.forEach((task, index) => {
+                let emoji = '';
+                if (index === 0) emoji = '🥇 ';
+                else if (index === 1) emoji = '🥈 ';
+                else if (index === 2) emoji = '🥉 ';
+                
+                const memoStr = task.memo ? ` (備註: ${task.memo})` : ' (備註: 無)';
+                taskOutput += `  ${emoji}項目 ${index + 1}: ${task.content}${memoStr} [⏱️ ${task.time}]\n`;
+            });
+        }
+
+        const reportTemplate = `【總部每日工作回報】
+
+回報日期：${reportDate}
+回報人：${reporter}
+匯報對象：${reportTo}
+
+一、本日主要執行項目與工時分析（已依重要度由上往下排序）：${overtimeWarning}
+${taskOutput}
+二、今日未完成/延宕事項與明日預告：
+- 本日未完成事項原因：${unfinishedText}
+- 明日核心工作預告 (Top 1~2)：${tomorrowPlan}
+
+三、跨部門協調 / 主管協作反饋：
+- ${assistText}`;
+
+        const previewDiv = document.getElementById('preview');
+        previewDiv.textContent = reportTemplate;
+        previewDiv.style.display = 'block';
+
+        navigator.clipboard.writeText(reportTemplate).then(() => {
+            showToast();
+        }).catch(err => {
+            const textArea = document.createElement("textarea");
+            textArea.value = reportTemplate;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showToast();
+        });
+    }
+
+    function showToast() {
+        const toast = document.getElementById('toast');
+        toast.style.display = 'block';
+        setTimeout(() => { toast.style.display = 'none'; }, 2500);
+    }
+</script>
+
+</body>
+</html>
