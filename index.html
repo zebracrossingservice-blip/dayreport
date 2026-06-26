@@ -138,7 +138,7 @@
 
         .inline-task-row {
             display: grid;
-            grid-template-columns: 3fr 2.5fr auto;
+            grid-template-columns: 3.5fr 2fr auto;
             gap: 10px;
             background: white;
             padding: 12px;
@@ -298,7 +298,7 @@
         const rowsContainer = document.getElementById('rowsContainer');
         const rowIndex = taskData.length;
 
-        const taskObj = { content: '', memo: '' };
+        const taskObj = { content: '', duration: '' };
         taskData.push(taskObj);
 
         const rowDiv = document.createElement('div');
@@ -315,7 +315,7 @@
                 <span style="font-weight:bold; font-size:14px; color:#4a5568; white-space:nowrap;">${rankLabel}:</span>
                 <input type="text" placeholder="工作內容" oninput="updateTaskData(${rowIndex}, 'content', this.value)">
             </div>
-            <input type="text" placeholder="備註 (選填)" oninput="updateTaskData(${rowIndex}, 'memo', this.value)">
+            <input type="text" placeholder="花費時間 (例如: 1.5h / 45m)" oninput="updateTaskData(${rowIndex}, 'duration', this.value)">
             <button class="btn-delete" onclick="deleteInlineRow(${rowIndex})">❌</button>
         `;
         rowsContainer.appendChild(rowDiv);
@@ -349,7 +349,7 @@
                     <span style="font-weight:bold; font-size:14px; color:#4a5568; white-space:nowrap;">${rankLabel}:</span>
                     <input type="text" value="${task.content}" placeholder="工作內容" oninput="updateTaskData(${i}, 'content', this.value)">
                 </div>
-                <input type="text" value="${task.memo}" placeholder="備註 (選填)" oninput="updateTaskData(${i}, 'memo', this.value)">
+                <input type="text" value="${task.duration || ''}" placeholder="花費時間 (例如: 1.5h / 45m)" oninput="updateTaskData(${i}, 'duration', this.value)">
                 <button class="btn-delete" onclick="deleteInlineRow(${i})">❌</button>
             `;
             rowsContainer.appendChild(rowDiv);
@@ -379,8 +379,8 @@
                 else if (index === 1) emoji = '🥈 ';
                 else if (index === 2) emoji = '🥉 ';
                 
-                const memoStr = task.memo ? ` (備註: ${task.memo})` : ' (備註: 無)';
-                taskOutput += `  ${emoji}項目 ${index + 1}: ${task.content}${memoStr}\n`;
+                const durationStr = task.duration ? ` (耗時: ${task.duration})` : ' (耗時: 未填寫)';
+                taskOutput += `  ${emoji}項目 ${index + 1}: ${task.content}${durationStr}\n`;
             });
         }
 
