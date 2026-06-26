@@ -230,9 +230,16 @@
 
     <div class="card">
         <div class="section-title">📈 各部門人員關鍵數據每日回報</div>
-        <div class="label-desc">請複製貼上您負責的每日關鍵數據、廣告業績、到貨進度、或 KPI 指標。</div>
         <div class="form-group">
+            <label>一、每日關鍵數據指標：</label>
+            <div class="label-desc">請複製貼上您負責的每日關鍵數據、廣告業績、到貨進度、或 KPI 指標。</div>
             <textarea id="dailyMetrics" placeholder="例如：今日廣告 ROAS: 4.2 / 官網業績: $55,000 / 新到貨商品盤點完成 30 箱..."></textarea>
+        </div>
+        
+        <div class="form-group" style="margin-top: 20px;">
+            <label>二、本週計畫當天排程：</label>
+            <div class="label-desc">💡 備註：可直接複製貼上週一設定的「週計畫工作內容」。</div>
+            <textarea id="weeklyScheduleText" placeholder="例如：&#10;1. 盤點春季新品入庫與上架作業&#10;2. 與工廠確認下一批大貨生產時程&#10;3. 優化官網首頁橫幅廣告素材"></textarea>
         </div>
     </div>
 
@@ -242,7 +249,7 @@
         
         <div class="day-bucket">
             <div class="day-title">
-                <div>本日執行項目</div>
+                <div>本日實際執行項目</div>
                 <button class="btn-plus" onclick="addInlineRow()">＋</button>
             </div>
             <div id="rowsContainer"></div>
@@ -362,6 +369,7 @@
         const reportTo = document.getElementById('reportTo').value || '[填寫您的對應主管]';
         
         const dailyMetrics = document.getElementById('dailyMetrics').value || '無';
+        const weeklyScheduleText = document.getElementById('weeklyScheduleText').value || '無';
         const overtimeReason = document.getElementById('overtimeReason').value || '無';
         const unfinishedText = document.getElementById('unfinishedText').value || '無';
         const tomorrowPlan = document.getElementById('tomorrowPlan').value || '[未填寫]';
@@ -391,7 +399,11 @@
 匯報對象：${reportTo}
 
 一、各部門人員關鍵數據每日回報：
+- 每日關鍵數據指標：
 ${dailyMetrics}
+
+- 本週計畫當天排程（週計畫內容）：
+${weeklyScheduleText}
 
 二、今日主要執行項目（已依重要度由上往下排序）：
 ${taskOutput}
