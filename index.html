@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZC 總部每日回報系統 v2</title>
+    <title>ZC 總部每日回報系統 v2.1</title>
     <style>
         :root {
             --primary-color: #2b5c43;
@@ -14,6 +14,7 @@
             --border-color: #e2e8f0;
             --danger-color: #e53e3e;
             --warning-bg: #fff5f5;
+            --focus-ring: #cbd5e1;
         }
 
         body {
@@ -199,6 +200,28 @@
             z-index: 3000;
         }
 
+        .required-star {
+            color: var(--danger-color);
+            margin-left: 4px;
+        }
+
+        .optional-badge {
+            font-size: 12px;
+            background-color: #edf2f7;
+            color: #4a5568;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: normal;
+            margin-left: 6px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        .focus-box {
+            background-color: #f0f7f4;
+            border: 1px solid #c2e0d1;
+        }
+
         @media (max-width: 600px) {
             .inline-task-row { grid-template-columns: 1fr; gap: 8px; }
         }
@@ -245,7 +268,7 @@
 
     <div class="card">
         <div class="section-title">📅 今日主要執行項目</div>
-        <div class="label-desc" style="margin-bottom: 15px; color: var(--primary-color); font-weight: bold;">💡 備註：請依據「重要程度最高（Top 3 核心工作）」由上往下排列填寫。</div>
+        <div class="label-desc" style="margin-bottom: 15px; color: var(--primary-color); font-weight: bold;">💡 備註：請依據「重要程度最高（Top 3 核心工作）」由上往下排列填寫。花費時間為必填。</div>
         
         <div class="day-bucket">
             <div class="day-title">
@@ -256,8 +279,24 @@
         </div>
 
         <div class="form-group" style="margin-top: 15px;">
-            <label style="color: #cbd5e10; font-size: 14px;">⚠️ 若今日實際執行時間/進度，超過原本每週排程之預估，請在下方特別註明原因與落差時間：</label>
+            <label style="color: #4a5568; font-size: 14px;">⚠️ 若今日實際執行時間/進度，超過原本每週排程之預估，請在下方特別註明原因與落差時間：</label>
             <textarea id="overtimeReason" placeholder="例如：項目 2 因廠商臨時調整規格，實際多花了 1.5 小時溝通處理。若無進度延宕或超時，請填「無」。"></textarea>
+        </div>
+    </div>
+
+    <!-- 新增：本月核心聚焦思維區塊 -->
+    <div class="card focus-box">
+        <div class="section-title" style="color: #1e422f; border-left-color: #1e422f;">🎯 本月核心聚焦發揮項目</div>
+        <div class="label-desc" style="margin-bottom: 15px; color: #2b5c43; font-weight: bold;">💡 提示：此區塊為思考與發揮題，若無相關工作內容可不填寫（系統會自動帶入「無」）。</div>
+        
+        <div class="form-group">
+            <label for="stockClearance">1. 今天我的工作內容幫助公司消化了哪些通路的庫存現貨？<span class="optional-badge">選填</span></label>
+            <textarea id="stockClearance" placeholder="例如：優化了官網滯銷品的推薦版位 / 門市陳列調整促進了現貨銷售...若無請留空。"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-top: 20px;">
+            <label for="valueCreation">2. 今天我的工作內容幫助公司創造了哪些業績實質效益？<span class="optional-badge">選填</span></label>
+            <textarea id="valueCreation" placeholder="例如：成功追回大陸追加延遲的商品，確保週五能順利上架創造營收 / 精準回覆客服提升轉換率...若無請留空。"></textarea>
         </div>
     </div>
 
@@ -322,7 +361,10 @@
                 <span style="font-weight:bold; font-size:14px; color:#4a5568; white-space:nowrap;">${rankLabel}:</span>
                 <input type="text" placeholder="工作內容" oninput="updateTaskData(${rowIndex}, 'content', this.value)">
             </div>
-            <input type="text" placeholder="花費時間 (例如: 1.5h / 45m)" oninput="updateTaskData(${rowIndex}, 'duration', this.value)">
+            <div style="display:flex; align-items:center; gap:4px;">
+                <input type="text" style="border-color:#cbd5e1" placeholder="花費時間 (必填，如: 1.5h)" oninput="updateTaskData(${rowIndex}, 'duration', this.value)">
+                <span class="required-star">*</span>
+            </div>
             <button class="btn-delete" onclick="deleteInlineRow(${rowIndex})">❌</button>
         `;
         rowsContainer.appendChild(rowDiv);
@@ -356,7 +398,10 @@
                     <span style="font-weight:bold; font-size:14px; color:#4a5568; white-space:nowrap;">${rankLabel}:</span>
                     <input type="text" value="${task.content}" placeholder="工作內容" oninput="updateTaskData(${i}, 'content', this.value)">
                 </div>
-                <input type="text" value="${task.duration || ''}" placeholder="花費時間 (例如: 1.5h / 45m)" oninput="updateTaskData(${i}, 'duration', this.value)">
+                <div style="display:flex; align-items:center; gap:4px;">
+                    <input type="text" style="border-color:#cbd5e1" value="${task.duration || ''}" placeholder="花費時間 (必填，如: 1.5h)" oninput="updateTaskData(${i}, 'duration', this.value)">
+                    <span class="required-star">*</span>
+                </div>
                 <button class="btn-delete" onclick="deleteInlineRow(${i})">❌</button>
             `;
             rowsContainer.appendChild(rowDiv);
@@ -371,13 +416,20 @@
         const dailyMetrics = document.getElementById('dailyMetrics').value || '無';
         const weeklyScheduleText = document.getElementById('weeklyScheduleText').value || '無';
         const overtimeReason = document.getElementById('overtimeReason').value || '無';
+        
+        // 獲取新增的選填聚焦項目
+        const stockClearance = document.getElementById('stockClearance').value.trim() || '無';
+        const valueCreation = document.getElementById('valueCreation').value.trim() || '無';
+
         const unfinishedText = document.getElementById('unfinishedText').value || '無';
         const tomorrowPlan = document.getElementById('tomorrowPlan').value || '[未填寫]';
         const assistText = document.getElementById('assistText').value || '無';
 
-        // 串接工作項目
+        // 串接工作項目與檢查必填時間
         let taskOutput = '';
+        let missingDuration = false;
         const validTasks = taskData.filter(t => t.content.trim() !== '');
+        
         if (validTasks.length === 0) {
             taskOutput = '  [本日無填寫具體工作內容]\n';
         } else {
@@ -387,9 +439,18 @@
                 else if (index === 1) emoji = '🥈 ';
                 else if (index === 2) emoji = '🥉 ';
                 
+                if (!task.duration || task.duration.trim() === '') {
+                    missingDuration = true;
+                }
+                
                 const durationStr = task.duration ? ` (耗時: ${task.duration})` : ' (耗時: 未填寫)';
                 taskOutput += `  ${emoji}項目 ${index + 1}: ${task.content}${durationStr}\n`;
             });
+        }
+
+        if (missingDuration && validTasks.length > 0) {
+            alert('⚠️ 填寫了工作內容的項目，請務必補上「花費時間」喔！');
+            return;
         }
 
         const reportTemplate = `【總部每日工作回報】
@@ -409,11 +470,18 @@ ${weeklyScheduleText}
 ${taskOutput}
 - 進度/時間超時說明（相較週排程）：${overtimeReason}
 
-三、今日未完成/延宕事項與明日預告：
+🎯 三、本月核心聚焦發揮項目（選填）：
+- 1.消化通路庫存現貨效益：
+${stockClearance}
+
+- 2.創造業績實質效益：
+${valueCreation}
+
+四、今日未完成/延宕事項與明日預告：
 - 本日未完成事項原因：${unfinishedText}
 - 明日核心工作預告 (Top 1~2)：${tomorrowPlan}
 
-四、今天申請加班 或是人員協助的原因與事項：
+五、今天申請加班 或是人員協助的原因與事項：
 - ${assistText}`;
 
         const previewDiv = document.getElementById('preview');
@@ -435,6 +503,8 @@ ${taskOutput}
 
     function showToast() {
         const toast = document.getElementById('toast');
+        const reportDate = document.getElementById('reportDate').value;
+        toast.textContent = `📋 已複製 ${reportDate} 每日回報至剪貼簿！`;
         toast.style.display = 'block';
         setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
